@@ -13,19 +13,19 @@ export function useScrollProgress() {
     gsap.registerPlugin(ScrollTrigger);
 
     const hero = document.querySelector('#home-hero');
-    const projects = document.querySelector('#home-projects');
     const trigger = gsap.to(scrollProgress, {
       current: 1,
       ease: 'none',
       scrollTrigger: {
         trigger: hero || document.documentElement,
         start: 'top top',
-        endTrigger: projects || document.documentElement,
-        end: projects ? 'top center' : 'bottom bottom',
+        endTrigger: document.documentElement,
+        end: 'bottom bottom',
         scrub: 0.8,
         invalidateOnRefresh: true,
       },
     });
+    ScrollTrigger.refresh();
 
     return () => {
       trigger.scrollTrigger?.kill();

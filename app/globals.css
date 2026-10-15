@@ -106,6 +106,30 @@
   }
 }
 
+/* ------------------------------------------------------------------ */
+/* 3D scene layer                                                      */
+/* Canvas is a fixed full-screen layer at z-0; page content (main)     */
+/* sits above it at z-10. Solid sections cover the building, sections  */
+/* with a transparent background let it show through.                  */
+/* ------------------------------------------------------------------ */
+#scene-canvas-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+#scene-canvas-wrapper * {
+  pointer-events: none !important;
+}
+#scene-canvas-wrapper canvas {
+  width: 100%;
+  height: 100%;
+}
+main {
+  position: relative;
+  z-index: 10;
+}
+
 @layer components {
   /* Universal card styling (Image 1 & 2) */
   .card,
@@ -430,8 +454,8 @@
 /* Theme toggle button */
 .theme-toggle {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -13,7 +13,7 @@ export function ThemeToggle() {
   }, []);
 
   if (!mounted) {
-    return <div className="w-10 h-10" />;
+    return <div className="h-11 w-11" />;
   }
 
   const isDark = theme === 'dark';

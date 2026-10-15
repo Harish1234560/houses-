@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import siteLogo from '@/app/(main)/logo.jpeg';
 import { Menu, X, Phone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NAV_LINKS, COMPANY, WHATSAPP_LINK } from '@/lib/constants';
@@ -76,21 +77,16 @@ export function Navbar() {
     >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group" aria-label="Golden Axis Ventures home">
-          {logoUrl ? (
-            <span className="relative block h-9 w-36 sm:h-10 sm:w-48">
-              <Image src={logoUrl} alt="Golden Axis Ventures" fill unoptimized sizes="(max-width: 640px) 144px, 192px" className="object-contain" />
-            </span>
-          ) : (
-            <>
-              <div className="w-9 h-9 rounded-sm border border-primary/40 flex items-center justify-center bg-primary/5 group-hover:bg-primary/10 group-hover:border-primary/60 transition-all duration-500">
-                <span className="font-serif text-primary text-lg font-semibold">GA</span>
-              </div>
-              <div className="hidden sm:block">
-                <div className="font-serif text-foreground text-lg leading-tight">Golden Axis</div>
-                <div className="text-[0.65rem] tracking-editorial uppercase text-muted-foreground leading-tight">Ventures</div>
-              </div>
-            </>
-          )}
+          <span className="relative block h-12 w-12 sm:h-14 sm:w-14">
+            <Image
+              src={logoUrl || siteLogo}
+              alt="Golden Axis Ventures"
+              fill
+              unoptimized
+              sizes="56px"
+              className="object-contain"
+            />
+          </span>
         </Link>
 
         <div className="hidden lg:flex items-center gap-1">
