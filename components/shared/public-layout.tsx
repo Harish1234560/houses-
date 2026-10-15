@@ -23,10 +23,10 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
       <Navbar />
       {isHome && (
         <div
-          className="pointer-events-none fixed inset-0 z-0"
+          className="pointer-events-none fixed inset-y-0 right-0 z-0 w-full lg:w-1/2"
           id="scene-canvas-wrapper"
           aria-hidden="true"
-          style={{ opacity: 0.34, transition: 'opacity 1s ease' }}
+          style={{ opacity: 0.12, transition: 'opacity 1s ease' }}
         >
           <ArchitecturalSceneLazy scrollProgress={scrollProgress} />
         </div>
