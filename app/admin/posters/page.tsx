@@ -240,7 +240,10 @@ function PosterForm({ poster, onClose, onSaved }: { poster: Poster | null; onClo
   );
 
   const handleFileUpload = async (file: File) => {
-    if (!supabase) return;
+    if (!supabase) {
+      toast.error('Image storage is unavailable. Please try again later.');
+      return;
+    }
     if (file.size > 10 * 1024 * 1024) {
       toast.error('File too large. Maximum 10MB.');
       return;
@@ -251,32 +254,28 @@ function PosterForm({ poster, onClose, onSaved }: { poster: Poster | null; onClo
     }
 
     setUploading(true);
-    const ext = file.name.split('.').pop();
-    const filename = `posters/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    try {
+      const ext = file.type.split('/')[1];
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error } = await supabase.storage
+        .from('posters')
+        .upload(filename, file, { cacheControl: '3600', contentType: file.type });
 
-    const { data, error } = await supabase.storage.from('posters').upload(filename, file, { cacheControl: '3600' });
+      if (error) throw error;
 
-    if (error) {
+      const { data: urlData } = supabase.storage.from('posters').getPublicUrl(filename);
+      const url = urlData.publicUrl;
+      const img = new window.Image();
+      img.onload = () => setFileInfo({ size: file.size, width: img.naturalWidth, height: img.naturalHeight });
+      img.onerror = () => setFileInfo({ size: file.size, width: 0, height: 0 });
+      img.src = url;
+      setImageUrl(url);
+      toast.success('Image uploaded.');
+    } catch (error) {
+      toast.error(error instanceof Error ? `Upload failed: ${error.message}` : 'Upload failed.');
+    } finally {
       setUploading(false);
-      toast.error('Upload failed. Please try again.');
-      return;
     }
-
-    const { data: urlData } = supabase.storage.from('posters').getPublicUrl(filename);
-    const url = urlData.publicUrl;
-
-    const img = new window.Image();
-    img.onload = () => {
-      setFileInfo({ size: file.size, width: img.naturalWidth, height: img.naturalHeight });
-      setUploading(false);
-    };
-    img.onerror = () => {
-      setFileInfo({ size: file.size, width: 0, height: 0 });
-      setUploading(false);
-    };
-    img.src = url;
-    setImageUrl(url);
-    toast.success('Image uploaded.');
   };
 
   const handleSave = async () => {
@@ -390,6 +389,7 @@ function PosterForm({ poster, onClose, onSaved }: { poster: Poster | null; onClo
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) handleFileUpload(file);
+                e.currentTarget.value = '';
               }}
             />
             {fileInfo && fileInfo.width > 0 && (

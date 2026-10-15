@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
 import { COMPANY, NAV_LINKS, WHATSAPP_LINK } from '@/lib/constants';
 import { useSupabase } from '@/components/providers/supabase-provider';
@@ -33,6 +34,7 @@ function WhatsAppIcon({ className }: { className?: string }) {
 export function Footer() {
   const { supabase } = useSupabase();
   const [socials, setSocials] = useState<SocialProfile[]>([]);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!supabase) return;
@@ -44,6 +46,12 @@ export function Footer() {
       .then((res: any) => {
         if (res.data) setSocials(res.data);
       });
+    supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'logo_url')
+      .maybeSingle()
+      .then(({ data }) => setLogoUrl(data?.value || null));
   }, [supabase]);
 
   const instaProfile = socials.find((s) => s.platform.toLowerCase() === 'instagram');
@@ -57,13 +65,21 @@ export function Footer() {
           {/* Brand + social */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-sm border border-primary/40 flex items-center justify-center bg-primary/5">
-                <span className="font-serif text-primary text-lg font-semibold">GA</span>
-              </div>
-              <div>
-                <div className="font-serif text-foreground text-xl leading-tight">Golden Axis</div>
-                <div className="text-[0.65rem] tracking-editorial uppercase text-muted-foreground leading-tight">Ventures</div>
-              </div>
+              {logoUrl ? (
+                <span className="relative block h-10 w-48">
+                  <Image src={logoUrl} alt="Golden Axis Ventures" fill unoptimized sizes="192px" className="object-contain" />
+                </span>
+              ) : (
+                <>
+                  <div className="w-10 h-10 rounded-sm border border-primary/40 flex items-center justify-center bg-primary/5">
+                    <span className="font-serif text-primary text-lg font-semibold">GA</span>
+                  </div>
+                  <div>
+                    <div className="font-serif text-foreground text-xl leading-tight">Golden Axis</div>
+                    <div className="text-[0.65rem] tracking-editorial uppercase text-muted-foreground leading-tight">Ventures</div>
+                  </div>
+                </>
+              )}
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
               Real estate marketing, project sales and strategic consulting — headquartered in Mysuru, reaching across South India.
